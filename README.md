@@ -165,11 +165,11 @@ Read [MODEL_CARD.md](MODEL_CARD.md), [ETHICS.md](ETHICS.md), and
 
 ## Authors
 
-| Name | Roll number |
-| --- | --- |
-| Muhammad Wahab | L1S23BSCS0030 |
-| Waleed Khalid | L1S23BSCS0034 |
-| Syed Zain Ul Abideen Gillani | L1S23BSCS0043 |
+| Name |
+| --- |
+| Muhammad Wahab |
+| Waleed Khalid |
+| Syed Zain Ul Abideen Gillani | 
 
 ## Citation and License
 
