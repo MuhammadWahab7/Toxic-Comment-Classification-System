@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+message: "If you use this project, please cite it using this metadata."
+title: "Toxic Comment Classification System"
+type: software
+authors:
+  - family-names: "Wahab"
+    given-names: "Muhammad"
+  - family-names: "Khalid"
+    given-names: "Waleed"
+  - family-names: "Gillani"
+    given-names: "Syed Zain Ul Abideen"
+repository-code: "https://github.com/MuhammadWahab7/Toxic-Comment-Classification-System"
+abstract: >-
+  A responsible machine-learning project for binary toxic-comment classification,
+  with a reproducible TF-IDF baseline and a preserved ensemble-learning notebook.
+keywords:
+  - toxic comment classification
+  - natural language processing
+  - content moderation
+  - responsible AI
+  - machine learning

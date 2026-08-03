@@ -1,0 +1,249 @@
+======================================================================
+Group Members :
+Muhammad Wahab – L1S23BSCS0030
+WALEED KHALID – L1S23BSCS0034
+SYED ZAIN UL ABIDEEN GILLANI – L1S23BSCS0043
+======================================================================
+
+
+
+
+======================================================================
+MACHINE LEARNING PROJECT — FINAL REPORT
+Topic: Toxic Comment Classification
+Generated: 2026-06-17 19:31:38
+======================================================================
+
+1. INTRODUCTION
+----------------------------------------
+This project applies the complete machine learning workflow to a real-world
+text classification problem: detecting toxic comments in online discussions.
+The work covers exploratory data analysis (EDA), data preprocessing, ensemble
+model training with hyperparameter tuning, and rigorous performance evaluation.
+
+The goal is to build a reliable binary classifier that can flag harmful or
+offensive user-generated text, supporting safer online communities and content
+moderation pipelines. The project uses Python with Pandas, Scikit-learn,
+XGBoost, and LightGBM, following standard ML practices from raw data inspection
+through model comparison and selection.
+
+
+2. PROBLEM STATEMENT
+----------------------------------------
+Online platforms receive large volumes of user comments daily. Manual moderation
+does not scale, and toxic content can harm users and degrade community quality.
+The problem is formulated as a supervised binary classification task:
+
+  • Input:  Features derived from a comment (text and metadata)
+  • Output: Whether the comment is toxic (1) or non-toxic (0)
+
+Challenges include severe class imbalance (~90% non-toxic vs. ~10% toxic),
+high-dimensional text features, and the need to avoid label leakage from
+related toxicity sub-labels (severe_toxic, obscene, threat, insult,
+identity_hate). The objective is to maximize overall classification quality
+while maintaining reasonable detection of the minority toxic class.
+
+
+3. DATASET DESCRIPTION
+----------------------------------------
+  Source file:     dataset.csv
+  Rows:            223,549
+  Columns:         11
+  Problem type:    Binary classification
+  Target column:   toxic
+
+  Column overview:
+    • id               — Unique comment identifier
+    • comment_text     — Raw text of the user comment (primary text feature)
+    • toxic            — Target label (0 = non-toxic, 1 = toxic)
+    • severe_toxic     — Related toxicity sub-label (excluded from features)
+    • obscene          — Related toxicity sub-label (excluded from features)
+    • threat           — Related toxicity sub-label (excluded from features)
+    • insult           — Related toxicity sub-label (excluded from features)
+    • identity_hate    — Related toxicity sub-label (excluded from features)
+    • input_word_ids   — Tokenized word IDs (dropped before modeling)
+    • input_mask       — Attention/padding mask (encoded as numeric feature)
+    • all_segment_id   — Segment IDs (dropped before modeling)
+
+  Target distribution:
+    • Non-toxic (0): 202,165 samples (90.43%)
+    • Toxic (1):      21,384 samples ( 9.57%)
+    • Imbalance ratio (min/max): 0.1058
+
+
+4. EDA FINDINGS
+----------------------------------------
+  • No missing values in raw data.
+  • Duplicate rows: 0 (0.00%)
+  • Target classes: 2 (binary). Strong class imbalance — toxic comments
+    represent roughly 9.6% of all records.
+  • Descriptive statistics and distribution plots (histograms, count plots,
+    box plots) were generated in the notebook to inspect numeric features.
+  • Correlation analysis identified highly correlated derived features
+    (word_count and active_tokens), which were removed during preprocessing.
+  • Outliers were present in numeric columns and addressed via IQR winsorization.
+  • Visualizations (heatmaps, ROC curves, confusion matrices) are included
+    in the project notebook for each model.
+
+
+5. PREPROCESSING STEPS
+----------------------------------------
+  • Removed 0 duplicate row(s)
+  • TF-IDF vectorization: 500 text features extracted from comment_text
+  • Dropped unusable columns before modeling:
+    ['id', 'comment_text', 'input_word_ids', 'all_segment_id']
+  • Dropped sibling labels to prevent target leakage:
+    ['severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate']
+  • Median/mode imputation applied; rows with missing target values dropped
+  • IQR winsorization capped 2,491,505 outlier value(s)
+  • Categorical encoding: One-Hot=[], Label=['input_mask']
+  • Dropped correlated features: ['word_count', 'active_tokens']
+  • Train/test split: 80% training, 20% testing (random_state=42,
+    stratified on target)
+  • StandardScaler fit on training data only (no test-set leakage)
+  • Class imbalance handled via balanced class weights (SMOTE disabled due
+    to dataset size and memory constraints)
+
+
+6. MODEL BUILDING
+----------------------------------------
+Six ensemble models were trained, tuned, and compared:
+
+  1. Random Forest Classifier (bagging ensemble)
+  2. XGBoost Classifier (gradient boosting, GPU-accelerated)
+  3. LightGBM Classifier (gradient boosting, GPU-accelerated)
+  4. Voting Classifier (soft-vote combination of RF, XGBoost, LightGBM)
+  5. Stacking Classifier (meta-learner on base model predictions)
+
+Training pipeline:
+  • Hyperparameter tuning via RandomizedSearchCV (5-fold cross-validation)
+  • Random Forest: n_iter=5 (CPU); XGBoost & LightGBM: n_iter=10 (GPU)
+  • Scoring metric: F1-score (appropriate for imbalanced classification)
+  • Class weights applied to address toxic-class underrepresentation
+
+Best hyperparameters (from RandomizedSearchCV):
+
+  Random Forest:
+    - max_depth: 30
+    - max_features: sqrt
+    - min_samples_leaf: 3
+    - min_samples_split: 9
+    - n_estimators: 216
+
+  XGBoost:
+    - colsample_bytree: 0.924330603027828
+    - learning_rate: 0.21181799896410522
+    - max_depth: 9
+    - min_child_weight: 6
+    - n_estimators: 414
+    - reg_alpha: 0.5208342600258237
+    - reg_lambda: 2.4223440486986982
+    - subsample: 0.8955868470373529
+
+  LightGBM:
+    - colsample_bytree: 0.9031616510212273
+    - learning_rate: 0.1802787529358022
+    - max_depth: 11
+    - min_child_samples: 12
+    - n_estimators: 349
+    - num_leaves: 83
+    - reg_alpha: 0.9699098521619943
+    - reg_lambda: 2.1648852816008435
+    - subsample: 0.6743186887373966
+
+
+7. EVALUATION RESULTS
+----------------------------------------
+Metrics: Accuracy | Precision | Recall | F1 | ROC-AUC
+(+ Precision/Recall/F1 for Toxic class — minority class of primary interest)
+Confusion matrices and ROC curves are shown in the notebook for each model.
+
+  Model comparison (test set):
+
+               Accuracy  Precision  Recall      F1  Precision (Toxic)  Recall (Toxic)  F1 (Toxic)  ROC-AUC
+Random Forest    0.8724     0.8700  0.8724  0.8712             0.3253          0.3117      0.3184   0.7428
+XGBoost          0.8319     0.8602  0.8319  0.8448             0.2344          0.3347      0.2757   0.7012
+LightGBM         0.8120     0.8666  0.8120  0.8350             0.2339          0.4247      0.3016   0.7254
+Voting           0.8445     0.8664  0.8445  0.8545             0.2673          0.3598      0.3067   0.7307
+Stacking         0.7493     0.8671  0.7493  0.7941             0.1948          0.5178      0.2831   0.7150
+
+  Scores as percentages:
+
+  Random Forest:
+    Accuracy: 87.24%    Precision: 87.00%    Recall: 87.24%    F1: 87.12%
+    Precision (Toxic): 32.53%    Recall (Toxic): 31.17%    F1 (Toxic): 31.84%
+    ROC-AUC: 74.28%
+
+  XGBoost:
+    Accuracy: 83.19%    Precision: 86.02%    Recall: 83.19%    F1: 84.48%
+    Precision (Toxic): 23.44%    Recall (Toxic): 33.47%    F1 (Toxic): 27.57%
+    ROC-AUC: 70.12%
+
+  LightGBM:
+    Accuracy: 81.20%    Precision: 86.66%    Recall: 81.20%    F1: 83.50%
+    Precision (Toxic): 23.39%    Recall (Toxic): 42.47%    F1 (Toxic): 30.16%
+    ROC-AUC: 72.54%
+
+  Voting:
+    Accuracy: 84.45%    Precision: 86.64%    Recall: 84.45%    F1: 85.45%
+    Precision (Toxic): 26.73%    Recall (Toxic): 35.98%    F1 (Toxic): 30.67%
+    ROC-AUC: 73.07%
+
+  Stacking:
+    Accuracy: 74.93%    Precision: 86.71%    Recall: 74.93%    F1: 79.41%
+    Precision (Toxic): 19.48%    Recall (Toxic): 51.78%    F1 (Toxic): 28.31%
+    ROC-AUC: 71.50%
+
+  Model ranking (by overall F1-score):
+
+    Rank 1 — Random Forest  (F1: 87.12%, ROC-AUC: 74.28%)
+    Rank 2 — Voting         (F1: 85.45%, ROC-AUC: 73.07%)
+    Rank 3 — LightGBM       (F1: 83.50%, ROC-AUC: 72.54%)
+    Rank 4 — Stacking       (F1: 79.41%, ROC-AUC: 71.50%)
+    Rank 5 — XGBoost        (F1: 84.48%, ROC-AUC: 70.12%)
+
+  Best model: Random Forest
+    Accuracy: 87.24%  |  F1: 87.12%  |  ROC-AUC: 74.28%
+    F1 (Toxic class): 31.84%
+
+  Key observations:
+    • Random Forest achieved the highest overall accuracy and F1-score.
+    • Stacking had the highest toxic-class recall (51.78%) but lowest accuracy,
+      trading precision for sensitivity.
+    • LightGBM offered the best toxic recall among single base models (42.47%).
+    • High overall accuracy partly reflects class imbalance; toxic-class F1
+      scores (~28–32%) indicate room for improvement on minority detection.
+
+
+8. CONCLUSION
+----------------------------------------
+This project successfully built and evaluated an ensemble-based pipeline for
+toxic comment detection on a dataset of 223,549 online comments. After EDA,
+preprocessing (TF-IDF text features, leakage prevention, scaling), and
+RandomizedSearchCV hyperparameter tuning, Random Forest emerged as the best
+overall model with 87.24% accuracy, 87.12% F1-score, and 74.28% ROC-AUC.
+
+Ensemble methods (Voting, Stacking) did not outperform Random Forest on
+overall metrics, though Stacking improved toxic-class recall at the cost of
+accuracy. The class imbalance remains the primary challenge: while non-toxic
+comments are classified reliably, detecting toxic comments (F1 ~32%) requires
+further work. The project demonstrates a complete ML workflow suitable for
+content moderation applications, with clear paths for improvement outlined below.
+
+
+9. FUTURE IMPROVEMENTS
+----------------------------------------
+  • Try additional feature engineering (polynomial features, domain-specific
+    transforms, n-gram TF-IDF, or transformer-based embeddings such as BERT)
+  • Expand hyperparameter search space or increase RandomizedSearchCV iterations
+  • Apply cross-validation on the full pipeline with a sklearn Pipeline object
+  • Collect more data or address class imbalance with SMOTE, focal loss, or
+    threshold tuning optimized for toxic-class recall
+  • Perform SHAP/LIME analysis for model interpretability
+  • Deploy best model with joblib/pickle for production inference
+  • Experiment with deep learning models (LSTM, DistilBERT) for richer text
+    representation beyond bag-of-words TF-IDF features
+
+======================================================================
+END OF REPORT
+======================================================================

@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "toxic-comment-classification-system"
+version = "0.1.0"
+description = "Responsible TF-IDF baseline for binary toxic-comment classification"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+  { name = "Muhammad Wahab" },
+  { name = "Waleed Khalid" },
+  { name = "Syed Zain Ul Abideen Gillani" },
+]
+dependencies = [
+  "joblib>=1.4,<2",
+  "pandas>=2.0,<3",
+  "scikit-learn>=1.3,<2",
+]
+
+[project.optional-dependencies]
+notebook = [
+  "imbalanced-learn>=0.12,<1",
+  "matplotlib>=3.7,<4",
+  "numpy>=1.24,<3",
+  "openpyxl>=3.1,<4",
+  "scipy>=1.10,<2",
+  "seaborn>=0.13,<1",
+]
+
+[project.scripts]
+toxic-comment-classify = "toxic_comment_classifier.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
