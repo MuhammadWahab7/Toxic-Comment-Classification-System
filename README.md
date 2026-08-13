@@ -14,6 +14,17 @@ guidance for content-moderation research.
 > evaluation, privacy controls, and deployment-specific threshold tuning remain
 > necessary.
 
+## Technology Stack
+
+| Area | Technology |
+| --- | --- |
+| Language | Python 3.10+ |
+| Machine Learning | scikit-learn, TF-IDF, Logistic Regression, ensemble notebooks |
+| Data Handling | pandas, NumPy, CSV-based datasets |
+| Model Artifacts | Joblib pipeline export and JSON metrics |
+| Experiment Environment | Local CLI workflow and preserved Google Colab notebook |
+| Quality | unittest, compile checks, GitHub Actions workflow |
+| Documentation | Model card, ethics notes, dataset card, security guidance, citation metadata |
 ## Project Components
 
 ### Reproducible CLI baseline
@@ -176,3 +187,5 @@ Read [MODEL_CARD.md](MODEL_CARD.md), [ETHICS.md](ETHICS.md), and
 Citation metadata is available in [`CITATION.cff`](CITATION.cff). This repository
 does not currently declare an open-source license; contact the authors before
 redistribution or use beyond review and academic evaluation.
+
+
