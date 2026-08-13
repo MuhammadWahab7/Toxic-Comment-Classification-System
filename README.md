@@ -14,6 +14,30 @@ guidance for content-moderation research.
 > evaluation, privacy controls, and deployment-specific threshold tuning remain
 > necessary.
 
+## What I Built
+
+This project turns toxic comment classification into a reproducible and responsible machine-learning workflow. I preserved the original exploratory notebook, added a cleaner CLI baseline, documented the dataset requirements, and included model-card, ethics, security, and citation files so the work can be reviewed properly.
+
+The project is not presented as a production moderation tool. It is framed as an academic and responsible-use ML project where model outputs are treated as screening signals that still require human review.
+
+## Why It Matters
+
+| Problem | How the project addresses it |
+| --- | --- |
+| Toxicity datasets can be biased and imbalanced | Documents limitations, class imbalance, and responsible-use requirements. |
+| Notebook-only ML work is hard to reproduce | Adds an installable CLI baseline with tests and saved artifacts. |
+| Accuracy alone can be misleading | Reports precision, recall, F1, ROC-AUC, confusion matrix, and toxic-class performance. |
+| Moderation systems affect people | Includes ethics, model card, security notes, and human-review guidance. |
+
+## How To Review The Project
+
+| Start here | What to look for |
+| --- | --- |
+| `src/toxic_comment_classifier/` | Reproducible baseline pipeline and CLI logic. |
+| `notebooks/` | Original exploratory Colab workflow. |
+| `MODEL_CARD.md` and `ETHICS.md` | Responsible-use framing and model limitations. |
+| `data/README.md` | Dataset requirements and acquisition notes. |
+| `tests/` | Repository integrity and baseline behavior checks. |
 ## Visual Overview
 
 ```mermaid
@@ -210,6 +234,7 @@ Read [MODEL_CARD.md](MODEL_CARD.md), [ETHICS.md](ETHICS.md), and
 Citation metadata is available in [`CITATION.cff`](CITATION.cff). This repository
 does not currently declare an open-source license; contact the authors before
 redistribution or use beyond review and academic evaluation.
+
 
 
 
