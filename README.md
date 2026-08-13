@@ -40,27 +40,11 @@ The project is not presented as a production moderation tool. It is framed as an
 | `tests/` | Repository integrity and baseline behavior checks. |
 ## Visual Overview
 
-```mermaid
-flowchart LR
-    Dataset[Comment Dataset] --> Validate[Validate text and labels]
-    Validate --> Clean[Clean empty or malformed records]
-    Clean --> Split[Stratified train/test split]
-    Split --> Features[Word and character TF-IDF]
-    Features --> Model[Balanced Logistic Regression]
-    Model --> Metrics[Metrics and confusion matrix]
-    Model --> Artifact[Saved Joblib pipeline]
-    Metrics --> Review[Responsible human review guidance]
-```
+![Toxic Comment Classification ML pipeline diagram](docs/visual-overview.svg)
 
-```mermaid
-flowchart TB
-    Prediction[Model Prediction] --> Signal[Probabilistic Signal]
-    Signal --> Threshold[Platform-Specific Threshold]
-    Threshold --> Human[Human Moderator Review]
-    Human --> Decision[Final Moderation Decision]
-    Human --> Appeal[Appeals and Feedback]
-    Appeal --> Evaluation[Bias and Subgroup Evaluation]
-```
+A full-width overview of the classification pipeline and the responsible moderation path after a model prediction.
+
+
 ## Technology Stack
 
 | Area | Technology |
@@ -234,6 +218,7 @@ Read [MODEL_CARD.md](MODEL_CARD.md), [ETHICS.md](ETHICS.md), and
 Citation metadata is available in [`CITATION.cff`](CITATION.cff). This repository
 does not currently declare an open-source license; contact the authors before
 redistribution or use beyond review and academic evaluation.
+
 
 
 
